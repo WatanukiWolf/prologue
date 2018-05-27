@@ -11,14 +11,6 @@ point([0, 1], -1).
 point([1, 0], -1).
 point([1, 1], +1).
 
-map([], _, []).
-map(List, Proc, X):-
-    List = [H|T],
-    A =.. [Proc, H, H2],
-    call(A),
-    map(T, Proc, T2),
-    X = [H2|T2].
-
 filter([], _).
 filter(List, Proc):-
     List = [Head|Tail],

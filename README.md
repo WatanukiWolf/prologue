@@ -1,2 +1,2 @@
 # prologue
-I use this repo. for my learning Prolog.
+I use this repository like a sandbox to learn Prolog.

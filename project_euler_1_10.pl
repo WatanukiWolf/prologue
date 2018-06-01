@@ -153,13 +153,75 @@ largest_palindrome_from_product_of_two_3digit_numbers(I, Memo, Ans):-
         I2 is I + 1,
         largest_palindrome_from_product_of_two_3digit_numbers(I2, Memo, Ans).
 
-:-  write('----Problem 4----\n'),
-    largest_palindrome_from_product_of_two_3digit_numbers(1, 0, Ans),
-    write(Ans),
-    write('\n').
+% :-  write('----Problem 4----\n'),
+%     largest_palindrome_from_product_of_two_3digit_numbers(1, 0, Ans),
+%     write(Ans),
+%     write('\n').
 
 % f([], _, []).
 % f([H|T], N, [H2|T2]):-
 %     H2 is H - N,
 %     f(T, N, T2).
-% 反省点、Memoを使わなくてもこういう風にパターンパッチを活用すれば再帰的に処理できる。
+% 反省点、Memoを使わなくてもこういう風にパターンマッチを活用すれば再帰的に処理できる。
+
+% Problem 5: Smallest multiple
+factorization(1, [], Memo, Memo).
+
+factorization(N, [H|T], Memo, Ans):-
+    \+(0 is N mod H)
+    ->  factorization(N, T, Memo, Ans)
+    ;   N2 is N / H,
+        append(Memo, [H], Memo2),
+        factorization(N2, [H|T], Memo2, Ans).
+
+count_factors([], Memo, Memo).
+
+count_factors([H|T], Memo, Ans):-
+    last(Memo, [H|Exponent])
+    ->  reverse(Memo, [_|R]),
+        reverse(R, R2),
+        Exponent2 is Exponent + 1,
+        append(R2, [[H|Exponent2]], Memo2),
+        count_factors(T, Memo2, Ans)
+    ;   append(Memo, [[H|1]], Memo2),
+        count_factors(T, Memo2, Ans).
+
+factorization_list(21, Memo, Memo).
+
+factorization_list(N, Memo, Ans):-
+    factorization(N, [2, 3, 5, 7, 11, 13, 17, 19], [], Factors),
+    count_factors(Factors, [], Counts),
+    append(Memo, [Counts], Memo2),
+    N2 is N + 1,
+    factorization_list(N2, Memo2, Ans).
+
+substitute(X, Y, List1, List2) :-
+        append(L1, [X | L2], List1),
+        append(L1, [Y | L2], List2).
+
+max_counts(_, [], Memo, Memo):- !.
+
+max_counts(20, [_|T], Memo, Ans):-
+    max_counts(2, T, Memo, Ans), !.
+
+max_counts(N, [H|T], Memo, Ans):-
+    N < 20,
+    (member([N|Exponent], H), member([N|Exponent2], Memo))
+    ->  Max is max(Exponent, Exponent2),
+        substitute([N|Exponent2], [N|Max], Memo, Memo2),
+        N2 is N + 1,
+        max_counts(N2, [H|T], Memo2, Ans)
+    ;   N2 is N + 1,
+        max_counts(N2, [H|T], Memo, Ans).
+
+smallest_multiple([], Memo, Memo).
+
+smallest_multiple([[N|Exponent]|T], Memo, Ans):-
+    N2 is N ** Exponent,
+    Memo2 is Memo * N2,
+    smallest_multiple(T, Memo2, Ans).
+
+:-  factorization_list(2, [], Factorization_list),
+    max_counts(2, Factorization_list, [[2|1], [3|1], [5|1], [7|1], [11|1], [13|1], [17|1], [19|1]], Max_counts),
+    smallest_multiple(Max_counts, 1, Ans),
+    write(Ans).

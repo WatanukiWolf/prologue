@@ -15,7 +15,7 @@ say_hi(_Request) :-
         </head>\c
         <body>\c
             <h2>A Simple Web Page</h2>\c
-            <p>With some text.</p>\c
+            <p>With some text. Good</p>\c
         </body>\c
         </html>~n').
     %format(_Request).
